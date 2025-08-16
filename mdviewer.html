@@ -1,0 +1,277 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">  
+  <title>Markdown Viewer</title>  
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>  
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>  
+  <!-- highlight.js -->  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <link rel="stylesheet" href="https://whois65.github.io/Style/saku.css">  
+  <style>  
+    :root { color-scheme: dark; }
+    body {  
+      display: flex;  
+      flex-direction: column;  
+      height: 100vh;  
+      margin: 0;  
+      font-family: sans-serif;  
+      background:#111; color:#eee;
+    }
+    body.menu-open { overflow: hidden; }
+
+    header {  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      padding: .75em 1em;  
+      background: #222;  
+      color: #fff;  
+      position: sticky; top:0;
+    }  
+
+    /* HAMBURGER */
+    .hamburger {  
+      width: 30px;  
+      height: 22px;  
+      cursor: pointer;  
+      display: flex;  
+      flex-direction: column;  
+      justify-content: space-between;
+      z-index: 1001;
+    }  
+    .hamburger span {  
+      display: block;  
+      height: 3px;  
+      width: 100%;  
+      background: #fff;  
+      border-radius: 3px;  
+      transition: 0.35s ease;  
+      transform-origin: center;
+    }  
+    /* Animasi jadi X */
+    .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    /* SIDE MENU */
+    #side-menu {  
+      position: fixed;  
+      top: 59px; right: -240px;  
+      width: 220px;  
+      height: 100%;  
+      background: #222;  
+      color: white;  
+      padding: 2em 1em;  
+      transition: right 0.3s ease;  
+      z-index: 1000;  
+      box-shadow: 6px 0 18px rgba(0,0,0,.35);
+    }  
+    #side-menu.active { right: 0; }  
+    #side-menu ul { list-style: none; padding: 0; margin:0; }  
+    #side-menu li { margin: 1em 0; }  
+    #side-menu a, #side-menu button, #side-menu label {  
+      color: white; text-decoration: none; border:0; background:none; cursor:pointer;
+      font: inherit;
+    }
+
+    /* BACKDROP */
+    #backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.45);
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+      z-index: 1000;
+    }
+    #backdrop.active { opacity: 1; pointer-events: auto; }
+
+    #browse {  
+      margin-top:.5rem;
+      padding: 6px 10px;  
+      border: none;  
+      border-radius: 8px;  
+      background:#e91e63; color:#fff;
+    }  
+
+    textarea {  
+      width: 100%;  
+      height: 30vh;  
+      padding: 1em;  
+      border: none;  
+      resize: none;  
+      font-size: 1em;  
+      background:#151515; color:#eaeaea;
+    }  
+    #output {  
+      flex: 1;  
+      padding: 2em;  
+      overflow-y: auto;  
+    }  
+    #output img { display:block; margin:auto; max-width:90%; height:auto; }
+    #output a { color: #8ab4ff; text-decoration: none; }
+    #output a:hover { text-decoration: underline; }
+
+    pre {  
+      background: #0b0b0b;  
+      border-radius: 8px;  
+      overflow-x: auto;  
+      padding: 1em;  
+    }  
+  </style>  
+</head>  
+<body> 
+  <header>
+    <h1 style="margin:0">MD Viewer</h1>
+    <div class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false" role="button" tabindex="0">  
+      <span></span>  
+      <span></span>  
+      <span></span>  
+    </div>  
+  </header>
+
+  <!-- Backdrop -->
+  <div id="backdrop"></div>
+
+  <!-- Side Menu -->  
+  <nav id="side-menu" aria-hidden="true">  
+    <ul>  
+      <li><a href="#">🏠 Home</a></li>  
+      <li>
+        <label for="mdFile">📂 Open .md File</label><br/>
+        <input type="file" id="mdFile" accept=".md" style="display:none;">
+        <button id="browse" onclick="document.getElementById('mdFile').click()" class="slide-up">Browse</button>
+      </li>  
+      <li><a href="#">⚙️ Settings</a></li>  
+      <li><a href="#">❓ Help</a></li>  
+    </ul>  
+  </nav>  
+
+  <textarea id="editor" placeholder="Write Markdown here..." class="scale-in"></textarea>  
+  <div id="output"></div>  
+  <button id="exportHtml" style="margin-bottom: 0.04rem;">Export .html</button>
+  <button id="exportPdf">Export .pdf</button>
+  <script>  
+    // ====== MENU ======
+    const menuBtn   = document.getElementById("menuBtn");
+    const sideMenu  = document.getElementById("side-menu");
+    const backdrop  = document.getElementById("backdrop");
+
+    function toggleMenu(force) {
+      const willOpen = (force !== undefined) ? force : !sideMenu.classList.contains("active");
+      sideMenu.classList.toggle("active", willOpen);
+      menuBtn.classList.toggle("active", willOpen);
+      backdrop.classList.toggle("active", willOpen);
+      document.body.classList.toggle("menu-open", willOpen);
+      menuBtn.setAttribute("aria-expanded", String(willOpen));
+      sideMenu.setAttribute("aria-hidden", String(!willOpen));
+    }
+
+    menuBtn.addEventListener("click", () => toggleMenu());
+    menuBtn.addEventListener("keydown", (e)=>{ if(e.key === "Enter" || e.key === " ") toggleMenu(); });
+    backdrop.addEventListener("click", () => toggleMenu(false));
+    // Tutup saat klik item menu
+    sideMenu.querySelectorAll("a,button,label").forEach(el => el.addEventListener("click", ()=> toggleMenu(false)));
+    // Tutup dengan Escape
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") toggleMenu(false); });
+
+    // ====== MARKED + HIGHLIGHT ======
+    marked.setOptions({
+      highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+      }
+    });
+
+    const editor   = document.getElementById("editor");  
+    const output   = document.getElementById("output");  
+    const fileInput= document.getElementById("mdFile");  
+
+    function updatePreview() {  
+      let markdownText = editor.value;  
+      // Custom highlight ==text== & --text--
+      markdownText = markdownText.replace(/==(.+?)==/g, `<mark style="background-color:#f7f399;">$1</mark>`);
+      markdownText = markdownText.replace(/--(.+?)--/g, `<mark style="background-color:lightblue;">$1</mark>`);
+
+      output.innerHTML = marked.parse(markdownText);  
+
+      output.querySelectorAll("pre code").forEach((block) => hljs.highlightElement(block));
+
+      if (window.MathJax) { MathJax.typeset(); }  
+    }  
+
+    editor.addEventListener("input", updatePreview);  
+
+    fileInput && fileInput.addEventListener("change", function () {  
+      const file = this.files[0];  
+      if (!file) return;  
+      const reader = new FileReader();  
+      reader.onload = function (e) {  
+        editor.value = e.target.result;  
+        updatePreview();  
+      };  
+      reader.readAsText(file);  
+    });  
+
+    updatePreview();
+    
+    //Download
+    document.getElementById("exportPdf").addEventListener("click", () => {
+  // Ambil isi preview
+  let content = document.getElementById("output").innerText;
+
+  // Pakai jsPDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Tambahin teks ke PDF
+  doc.text(content, 10, 10);
+
+  // Download file
+  doc.save("myfile.pdf");
+});
+
+document.getElementById("exportHtml").addEventListener("click", () => {
+  // Ambil isi dari preview
+  let content = document.getElementById("output").innerHTML;
+
+  // Bungkus jadi HTML lengkap
+  let htmlFile = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exported File</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 1rem; }
+  </style>
+</head>
+<body>
+${content}
+</body>
+</html>`;
+
+  // Bikin Blob lalu download
+  let blob = new Blob([htmlFile], { type: "text/html" });
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "myfile.html";
+  link.click();
+});
+  </script>  
+</body>  
+</html>
