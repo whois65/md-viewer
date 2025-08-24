@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">  
   <title>Markdown Viewer</title>  
   <script src="script.js"></script>
-  
   <!-- MathJax -->
   <script>
     window.MathJax = {
@@ -14,23 +13,20 @@
       svg: { fontCache: 'global' }
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>  
-
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <!-- Markdown & Highlight -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>  
-
   <!-- jsPDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="stylesheet" href="https://whois65.github.io/style/saku.css">  
   <style>
     *{ font-family: sans-serif; }
     :root { color-scheme: dark; }
     body {  
-      display: flex; flex-direction: column;  
-      height: 100vh; margin: 0;  
+      display: flex;flex-direction: column;  
+      height: 100vh;
       font-family: sans-serif;  
       background:#111; color:#eee;
     }
@@ -39,12 +35,12 @@
       display: flex; justify-content: space-between; align-items: center;  
       padding: .75em 1em;  
       background: #222; color: #fff;  
-      position: sticky; top:0; z-index:1002;
+      position: sticky; top:0; z-index:10;
     }  
     .hamburger {  
       width: 30px; height: 22px;  
       cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;
-      z-index: 1003;
+      z-index: 11;
     }  
     .hamburger span {  
       display: block; height: 3px; width: 100%;  
@@ -95,7 +91,7 @@
     #output {  
       flex: 1; padding: 2em;  
       overflow-y: auto; line-height:1.6;
-    }  
+    } #output h1 { background-color: #555;}
     #output img { display:block; margin:auto; max-width:90%; height:auto; }
     #output a { color: #8ab4ff; text-decoration: none; }
     #output a:hover { text-decoration: underline; }
