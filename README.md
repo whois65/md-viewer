@@ -1,5 +1,5 @@
 # .md viewer
 
- You can use this website for displays markdown files.
+ You can use this website for open markdown files.
 
  😁👍
