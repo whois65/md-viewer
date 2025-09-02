@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 | Access Denied</title>
+  <style>
+    /* RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000;
+      color: #39ff14;
+      font-family: "Courier New", monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Canvas untuk efek hujan kode */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 7rem;
+      color: #39ff14;
+      text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14, 0 0 80px #39ff14;
+      animation: glitch 1s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-3px, 2px); }
+      40% { transform: translate(3px, -2px); }
+      60% { transform: translate(-2px, 3px); }
+      80% { transform: translate(2px, -3px); }
+      100% { transform: translate(0); }
+    }
+
+    p {
+      font-size: 1.3rem;
+      margin-top: 10px;
+      color: #00ff77;
+      opacity: 0.8;
+      text-align: center;
+    }
+
+    .terminal {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 600px;
+      padding: 15px;
+      border: 2px solid #00ff99;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 20px #00ff99;
+      text-align: left;
+    }
+
+    #typewriter {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 24px;
+      background: #39ff14;
+      color: #000;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14;
+      transition: all 0.3s ease-in-out;
+    }
+
+    button:hover {
+      background: #000;
+      color: #39ff14;
+      box-shadow: 0 0 40px #39ff14, 0 0 80px #39ff14;
+    }
+  </style>
+</head>
+<body>
+  <!-- Efek Matrix -->
+  <canvas id="matrix"></canvas>
+
+  <h1>404</h1>
+  <p>ACCESS DENIED | SYSTEM BREACHED</p>
+
+  <div class="terminal">
+    <div id="typewriter"></div>
+  </div>
+
+  <button onclick="window.location.href='/'">💻 Back to Home</button>
+
+  <script>
+    /* ================================
+       Efek Matrix Hujan Kode
+    ================================= */
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "01";
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#39ff14";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 35);
+
+    /* ================================
+       Typewriter + Beep Effect
+    ================================= */
+    const textLines = [
+      "[INFO] Initializing system scan...",
+      "[INFO] Searching for missing page...",
+      "[ERROR] Page not found on this server!",
+      "[WARNING] Unauthorized access detected!",
+      "[INFO] Sending user back to safe zone..."
+    ];
+
+    const typewriter = document.getElementById("typewriter");
+    let line = 0, char = 0;
+
+    function beep() {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      oscillator.type = "square";
+      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+      oscillator.connect(audioCtx.destination);
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function type() {
+      if (line < textLines.length) {
+        if (char < textLines[line].length) {
+          typewriter.textContent += textLines[line].charAt(char);
+          char++;
+          beep();
+          setTimeout(type, 50);
+        } else {
+          typewriter.textContent += "\n";
+          char = 0;
+          line++;
+          setTimeout(type, 500);
+        }
+      }
+    }
+    type();
+  </script>
+</body>
+</html>
