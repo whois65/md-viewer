@@ -16,90 +16,195 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <!-- Markdown & Highlight -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>  
   <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <link rel="stylesheet" href="https://whois65.github.io/projects/style/dark.css">  
-  <style>
-    *{ font-family: sans-serif; }
-    :root { color-scheme: dark; }
-    body {  
-      display: flex;flex-direction: column;  
-      height: 100vh;
-      font-family: sans-serif;  
-      background:#111; color:#eee;
-    }
-    body.menu-open { overflow: hidden; }
-    header {  
-      display: flex; justify-content: space-between; align-items: center;  
-      padding: .75em 1em;  
-      background: #222; color: #fff;  
-      position: sticky; top:0; z-index:10;
-    }  
-    .hamburger {  
-      width: 30px; height: 22px;  
-      cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;
-      z-index: 11;
-    }  
-    .hamburger span {  
-      display: block; height: 3px; width: 100%;  
-      background: #fff; border-radius: 3px;  
-      transition: 0.35s ease; transform-origin: center;
-    } 
-    .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-    .hamburger.active span:nth-child(2) { opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+<style>
+  :root {
+    color-scheme: dark;
+    --bg-main: #0f111a;
+    --bg-panel: #1a1d2b;
+    --accent: #4e9cff;
+    --accent-light: #7ab0ff;
+    --text-main: #e0e6f5;
+    --radius: 12px;
+    --shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
 
-    #side-menu {  
-      position: fixed; top: 59px; right: -240px;  
-      width: 220px; height: 100%;  
-      background: #222; color: white;  
-      padding: 2em 1em;  
-      transition: right 0.3s ease;  
-      z-index: 1001;  
-      box-shadow: -6px 0 18px rgba(0,0,0,.35);
-    }  
-    #side-menu.active { right: 0; }  
-    #side-menu ul { list-style: none; padding: 0; margin:0; }  
-    #side-menu li { margin: 1em 0; }  
-    #side-menu a, #side-menu button, #side-menu label {  
-      color: white; text-decoration: none; border:0; background:none; cursor:pointer;
-      font: inherit;
-    }
-    #backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.45);
-      opacity: 0; pointer-events: none;
-      transition: opacity .3s ease;
-      z-index: 1000;
-    }
-    #backdrop.active { opacity: 1; pointer-events: auto; }
+  * {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    box-sizing: border-box;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background: var(--bg-main);
+    color: var(--text-main);
+  }
+  body.menu-open { overflow: hidden; }
 
-    #browse {  
-      margin-top:.5rem;
-      padding: 6px 10px; border: none;  
-      border-radius: 8px; background:#e91e63; color:#fff;
-    }  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .75em 1.2em;
+    background: linear-gradient(90deg,#1c2030,#23283d);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: var(--shadow);
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: .5px;
+  }
 
-    textarea {  
-      width: 100%; height: 30vh;  
-      padding: 1em; border: none;  
-      resize: none; font-size: 1em;  
-      background:#151515; color:#eaeaea;
-    }  
-    #output {  
-      flex: 1; padding: 2em;  
-      overflow-y: auto; line-height:1.6;
-    } #output h1 { background-color: #555;}
-    #output img { display:block; margin:auto; max-width:90%; height:auto; }
-    #output a { color: #8ab4ff; text-decoration: none; }
-    #output a:hover { text-decoration: underline; }
-    pre {  
-      background: #0b0b0b; border-radius: 8px;  
-      overflow-x: auto; padding: 1em;
-    }  
-  </style>  
+  .hamburger {
+    width: 30px; height: 22px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 11;
+  }
+  .hamburger span {
+    display: block;
+    height: 3px; width: 100%;
+    background: #fff;
+    border-radius: 3px;
+    transition: 0.35s ease;
+    transform-origin: center;
+  }
+  .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+  #side-menu {
+    position: fixed;
+    top: 59px; right: -260px;
+    width: 240px; height: 100%;
+    background: var(--bg-panel);
+    padding: 2em 1.2em;
+    transition: right .3s ease;
+    z-index: 1001;
+    box-shadow: -6px 0 18px rgba(0,0,0,.4);
+    border-left: 1px solid rgba(255,255,255,.05);
+  }
+  #side-menu.active { right: 0; }
+  #side-menu ul { list-style: none; margin: 0; padding: 0; }
+  #side-menu li { margin: 1.2em 0; }
+  #side-menu a,
+  #side-menu button,
+  #side-menu label {
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 1rem;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: color .2s ease;
+  }
+  #side-menu a:hover,
+  #side-menu button:hover,
+  #side-menu label:hover {
+    color: var(--accent-light);
+  }
+
+  #backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+    z-index: 1000;
+  }
+  #backdrop.active { opacity: 1; pointer-events: auto; }
+
+  #browse {
+    margin-top: .5rem;
+    padding: 8px 14px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: background .2s ease, transform .1s ease;
+  }
+  #browse:hover { background: var(--accent-light); transform: translateY(-2px); }
+
+  textarea {
+    width: 100%;
+    height: 30vh;
+    padding: 1em;
+    border: none;
+    resize: none;
+    font-size: 1rem;
+    background: var(--bg-panel);
+    color: var(--text-main);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-top: 1rem;
+  }
+
+  #output {
+    flex: 1;
+    padding: 2em;
+    overflow-y: auto;
+    line-height: 1.7;
+    background: var(--bg-panel);
+    margin: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  #output h1, #output h2, #output h3 {
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    padding-bottom: .3em;
+  }
+  #output img {
+    display: block;
+    margin: 1.5em auto;
+    max-width: 90%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  #output a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  #output a:hover { text-decoration: underline; }
+  pre {
+    background: #0b0b0b;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    padding: 1em;
+  }
+
+  #exportHtml, #exportPdf {
+    margin: 0 1rem 1rem;
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: background .2s ease, transform .1s ease;
+  }
+  #exportHtml:hover, #exportPdf:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+  }
+</style>
 </head>  
 <body> 
   <header>
@@ -119,7 +224,7 @@
         <button id="browse" onclick="document.getElementById('mdFile').click()">Browse</button>
       </li>  
       <li><a href="#">⚙️ Settings</a></li>  
-      <li><a href="example.md">Help</a></li>  
+      <li><a href="/example.md">Help</a></li>  
     </ul>  
   </nav>  
 
@@ -209,9 +314,6 @@ document.getElementById("exportHtml").addEventListener("click", () => {
 <head>
   <meta charset="UTF-8">
   <title>Exported File</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <link rel="stylesheet" href="https://whois65.github.io/style/saku.css">
-  ${script}
   <style> body { font-family: Arial, sans-serif; padding: 1rem; } </style>
 </head>
 <body>
