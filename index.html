@@ -32,8 +32,10 @@
   }
 
   * {
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      box-sizing: border-box;
   }
   body {
     display: flex;
@@ -58,59 +60,21 @@
     box-shadow: var(--shadow);
   }
   header h1 {
-    margin: 0;
     font-weight: 600;
     letter-spacing: .5px;
   }
-
-  .hamburger {
-    width: 30px; height: 22px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    z-index: 11;
+  #side-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
   }
-  .hamburger span {
-    display: block;
-    height: 3px; width: 100%;
-    background: #fff;
-    border-radius: 3px;
-    transition: 0.35s ease;
-    transform-origin: center;
-  }
-  .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-  .hamburger.active span:nth-child(2) { opacity: 0; }
-  .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
-
-  #side-menu {
-    position: fixed;
-    top: 59px; right: -260px;
-    width: 240px; height: 100%;
-    background: var(--bg-panel);
-    padding: 2em 1.2em;
-    transition: right .3s ease;
-    z-index: 1001;
-    box-shadow: -6px 0 18px rgba(0,0,0,.4);
-    border-left: 1px solid rgba(255,255,255,.05);
-  }
-  #side-menu.active { right: 0; }
-  #side-menu ul { list-style: none; margin: 0; padding: 0; }
-  #side-menu li { margin: 1.2em 0; }
-  #side-menu a,
-  #side-menu button,
-  #side-menu label {
-    color: var(--text-main);
+  #side-menu li { margin: 3px 0; }
+  #side-menu a, #side-menu button, #side-menu p {
     text-decoration: none;
-    font-size: 1rem;
-    border: 0;
-    background: none;
-    cursor: pointer;
-    transition: color .2s ease;
+    color: #eee;
   }
-  #side-menu a:hover,
-  #side-menu button:hover,
-  #side-menu label:hover {
+  #side-menu a:hover, #side-menu button:hover, #side-menu p:hover {
+    text-decoration: none;
     color: var(--accent-light);
   }
 
@@ -158,7 +122,8 @@
     padding: 2em;
     overflow-y: auto;
     line-height: 1.7;
-    background: var(--bg-panel);
+    background: #fff;
+    color: #000;
     margin: 1rem;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
@@ -186,8 +151,7 @@
     overflow-x: auto;
     padding: 1em;
   }
-
-  #exportHtml, #exportPdf {
+  button {
     margin: 0 1rem 1rem;
     padding: 10px 16px;
     border: none;
@@ -200,43 +164,111 @@
     box-shadow: var(--shadow);
     transition: background .2s ease, transform .1s ease;
   }
-  #exportHtml:hover, #exportPdf:hover {
+  button:hover{
     background: var(--accent-light);
     transform: translateY(-2px);
+  }
+  
+  #exit {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  @media (max-width: 400px) {
+      #menuBtn {
+    width: 30px; height: 22px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 11;
+  }
+  #menuBtn p {
+    display: block;
+    height: 3px; width: 100%;
+    background: #fff;
+    border-radius: 3px;
+    transition: 0.35s ease;
+    transform-origin: center;
+  }
+  #menuBtn.active p:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+  #menuBtn.active p:nth-child(2) { opacity: 0; }
+  #menuBtn.active p:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+  #side-menu {
+    position: fixed;
+    top: 59px; right: -260px;
+    width: 240px; height: 100%;
+    background: var(--bg-panel);
+    padding: 2em 1.2em;
+    transition: right .3s ease;
+    z-index: 1001;
+    box-shadow: -6px 0 18px rgba(0,0,0,.4);
+    border-left: 1px solid rgba(255,255,255,.05);
+  }
+  #side-menu.active { right: 0; }
   }
 </style>
 </head>  
 <body> 
   <header>
-    <h1 style="margin:0">MD Viewer</h1>
-    <div class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false" role="button" tabindex="0">  
-      <span></span><span></span><span></span>  
-    </div>  
+    <h1>Markdown</h1>
+    <div id="menuBtn"><p></p><p></p><p></p></div>  
   </header>
 
   <div id="backdrop"></div>
-  <nav id="side-menu" aria-hidden="true">  
+  <nav id="side-menu">  
     <ul>  
-      <li><a href="#">🏠 Home</a></li>  
+      <li><a href="https://whois65.github.io/portfolio">Home</a></li>
       <li>
-        <label for="mdFile">📂 Open .md File</label><br/>
-        <input type="file" id="mdFile" accept=".md" style="display:none;">
-        <button id="browse" onclick="document.getElementById('mdFile').click()">Browse</button>
-      </li>  
-      <li><a href="#">⚙️ Settings</a></li>  
-      <li><a href="example.md">Help</a></li>  
-    </ul>  
+        <p onclick="document.querySelector('#mdFile').click()">Open .md File</p>
+        <input type="file" id="mdFile" accept=".md" hidden>
+      </li>
+      <li><p id="exportMD">Save as Markdown</p></li>
+      <li><p id="exportHtml">Save as html</p></li>
+      <li><p id="exportPdf">Save as pdf</p></li>
+      <li><a href="#">Settings</a></li>  
+      <li><a href="example.md">Help</a></li>
+    </ul>
   </nav>  
 
-  <textarea id="editor" placeholder="Write Markdown here..."></textarea>  
-  <div id="output"></div>  
-  <button id="exportHtml">Export .html</button>
-  <button id="exportPdf">Export .pdf</button>
+  <textarea id="editor" placeholder="Write Markdown here..."></textarea>
+  <label for="color">Choose background color:</label>
+  <input type="color" name="color" id="colorpick" value="#FFFFFF">
+  <label for="color2">Choose text color:</label>
+  <input type="color" name="color2" id="colorpicker" value="#000000">
+  <div id="output"></div>
+  <button id="exit">exit</button>
+  <button id="enter">enter</button>
 
-  <script>  
+  <script>
+const editor   = document.getElementById("editor");  
+const output   = document.getElementById("output");  
+const fileInput= document.getElementById("mdFile");
 const menuBtn   = document.getElementById("menuBtn");
 const sideMenu  = document.getElementById("side-menu");
 const backdrop  = document.getElementById("backdrop");
+const incolor = document.querySelector("#colorpick");
+const incolor2 = document.querySelector("#colorpicker");
+
+/* ===== FULLSCREEN ===== */
+document.querySelector("#enter").addEventListener("click", async () => {
+  try { await output.requestFullscreen(); } catch (err) { alert(`Fullscreen failed: ${err}`); }
+});
+document.querySelector("#exit").addEventListener("click", async () => {
+  try { if (document.fullscreenElement) await document.exitFullscreen(); }
+  catch (err) { alert(`Exit fullscreen failed: ${err}`); }
+});
+
+incolor.addEventListener("change", () => {
+    output.style.backgroundColor= incolor.value;
+});
+
+incolor2.addEventListener("change", () => {
+    output.style.color= incolor2.value;
+});
 
 function toggleMenu(force) {
   const willOpen = (force !== undefined) ? force : !sideMenu.classList.contains("active");
@@ -262,10 +294,6 @@ marked.setOptions({
     return hljs.highlightAuto(code).value;
   }
 });
-
-const editor   = document.getElementById("editor");  
-const output   = document.getElementById("output");  
-const fileInput= document.getElementById("mdFile");  
 
 function updatePreview() {  
   let markdownText = editor.value;  
@@ -313,8 +341,10 @@ document.getElementById("exportHtml").addEventListener("click", () => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exported File</title>
-  <style> body { font-family: Arial, sans-serif; padding: 1rem; } </style>
+  <style>body{font-family:Arial,sans-serif;padding:1rem;}</style>
 </head>
 <body>
 ${content}
@@ -324,6 +354,14 @@ ${content}
   let link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = "myfile.html";
+  link.click();
+});
+
+document.getElementById("exportMD").addEventListener("click", () => {
+  const blob = new Blob([editor.value], { type: "text/markdown" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "myfile.md";
   link.click();
 });
   </script>  
