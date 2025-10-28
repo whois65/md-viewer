@@ -169,13 +169,6 @@
     transform: translateY(-2px);
   }
   
-  #exit {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
   @media (max-width: 400px) {
       #menuBtn {
     width: 30px; height: 22px;
@@ -240,8 +233,8 @@
   <label for="color2">Choose text color:</label>
   <input type="color" name="color2" id="colorpicker" value="#000000">
   <div id="output"></div>
-  <button id="exit">exit</button>
   <button id="enter">enter</button>
+  <button id="exit">exit</button>
 
   <script>
 const editor   = document.getElementById("editor");  
@@ -297,14 +290,27 @@ marked.setOptions({
 
 function updatePreview() {  
   let markdownText = editor.value;  
+
+  // Custom mark styling
   markdownText = markdownText.replace(/==(.+?)==/g, `<mark style="background-color:#f7f399;">$1</mark>`);
   markdownText = markdownText.replace(/--(.+?)--/g, `<mark style="background-color:lightblue;">$1</mark>`);
 
-  output.innerHTML = marked.parse(markdownText);  
-  output.querySelectorAll("pre code").forEach((block) => hljs.highlightElement(block));
+  // 🔥 FIX blok math display
+  markdownText = markdownText.replace(/\$\$([\s\S]+?)\$\$/g, (_, expr) => {
+    return `<div class="math-display">\\[${expr}\\]</div>`;
+  });
 
-  if (window.MathJax) { MathJax.typesetPromise(); }  
-}  
+  // Convert markdown ke HTML
+  let html = marked.parse(markdownText);
+
+  output.innerHTML = html;
+
+  // Syntax highlight
+  output.querySelectorAll("pre code").forEach(block => hljs.highlightElement(block));
+
+  // MathJax render ulang
+  if (window.MathJax) MathJax.typesetPromise();
+}
 
 editor.addEventListener("input", updatePreview);  
 
