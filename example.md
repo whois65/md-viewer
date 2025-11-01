@@ -11,7 +11,7 @@ ___
 - *Italic* _Italic_
 - ~lined~ ~~ko~~
 - [YouTube](https://youtube.com)
-- ![kucing](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUA4pQtdrwad2D2s2VCRTdMmxDajAkpF5g9DTFV_5G8ML6U8FdXzI5WZU&s=10)
+- ![cat](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUA4pQtdrwad2D2s2VCRTdMmxDajAkpF5g9DTFV_5G8ML6U8FdXzI5WZU&s=10)
 - [Google](https://google.com)
 - Unordered list
 1. Ordered list
@@ -38,6 +38,5 @@ console.log("hello world!");
 ```
 ---
 > Block quote
-hello world!
 
 [Latex Configuration](/others/latexconfig.md)
