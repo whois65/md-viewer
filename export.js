@@ -1,16 +1,3 @@
-// Export PDF
-document.getElementById("exportPdf").addEventListener("click", () => {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  doc.html(document.getElementById("output"), {
-    callback: function (doc) {
-      doc.save("myfile.pdf");
-    },
-    x: 20,
-    y: 20,
-    width: 550,
-  });
-});
 // Export HTML
 document.getElementById("exportHtml").addEventListener("click", () => {
   let content = document.getElementById("output").innerHTML;
@@ -40,13 +27,5 @@ ${content}
   let link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = filename + ".html";
-  link.click();
-});
-// Export MD
-document.getElementById("exportMD").addEventListener("click", () => {
-  const blob = new Blob([editor.value], { type: "text/markdown" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "myfile.md";
   link.click();
 });
