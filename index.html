@@ -7,8 +7,7 @@
     <title>Markdown Viewer</title>
     <!-- MathJax -->
     <script>
-        window.MathJax = {
-            tex: {
+        window.MathJax = { tex: {
                 inlineMath: [
                     ["$", "$"],
                     ["\\(", "\\)"],
@@ -22,396 +21,268 @@
         };
     </script>
     <script id="mathjax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- Markdown & Highlight -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Markdown & Highlight --><script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <!--
-  github.min.css
-  atom-one-dark.min.css
-  monokai-sublime.min.css
-  dracula.min.css
-  -->
+    <!--github.min.css, atom-one-dark.min.css, monokai-sublime.min.css, dracula.min.css-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF --><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            color-scheme: dark;
-            --bg-main: #0f111a;
-            --bg-panel: #1a1d2b;
-            --accent: #4e9cff;
-            --accent-light: #7ab0ff;
-            --text-main: #e0e6f5;
-            --radius: 12px;
-            --shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-        }
+    color-scheme: dark;
+    --bg-main: #0f111a;
+    --bg-panel: #1a1d2b;
+    --accent: #4e9cff;
+    --accent-light: #7ab0ff;
+    --text-main: #e0e6f5;
+    --radius: 12px;
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
 
-        * {
-            padding: 0;
-            margin: 0;
-            font-family: "Segoe UI", Roboto, sans-serif;
-            box-sizing: border-box;
-        }
+* {padding: 0;margin: 0;box-sizing: border-box;font-family: "Segoe UI", Roboto, sans-serif; }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-            background: var(--bg-main);
-            color: var(--text-main);
-            user-select: none;
-        }
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background: var(--bg-main);
+    color: var(--text-main);
+    user-select: none;
+}
 
-        body.menu-open {
-            overflow: hidden;
-        }
+body.menu-open { overflow: hidden; }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75em 1.2em;
-            background: linear-gradient(90deg, #1c2030, #23283d);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: var(--shadow);
-        }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75em 1.2em;
+    background: linear-gradient(90deg, #1c2030, #23283d);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: var(--shadow);
+}
 
-        header a {
-            color: #fff;
-            font-size: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
+header a {
+    color: #fff;
+    font-size: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
 
-        #side-menu {
-            position: absolute;
-            right: 5px;
-        }
+#side-menu {position: absolute;right: 5px; }
+#side-menu button {border: none; background: none;}
+#side-menu a, #side-menu button {padding: 10px;font-size: 17px;text-decoration: none;color: #eee;font-weight: 500;touch-action: manipulation; }
+#side-menu button:hover, #side-menu a:hover { color: var(--accent-light); }
+#browse {
+    margin-top: 0.5rem;
+    padding: 8px 14px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: background 0.2s ease, transform 0.1s ease;
+}
 
-        #side-menu button {
-            border: none;
-            background: none;
-        }
+#browse:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+}
 
-        #side-menu a,
-        #side-menu button {
-            font-size: 15px;
-            text-decoration: none;
-            color: #eee;
-        }
-        #side-menu button:hover,
-        #side-menu a:hover {
-            color: var(--accent-light);
-        }
-        
-        #backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
-        }
+main { display: flex; gap: 5px; margin: 6px; }
 
-        #backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+textarea {
+    outline: none;
+    width: 50%;
+    height: 80vh;
+    padding: 1em;
+    border: none;
+    resize: none;
+    font-size: 1rem;
+    background: var(--bg-panel);
+    color: var(--text-main);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-top: 1rem;
+}
 
-        #browse {
-            margin-top: 0.5rem;
-            padding: 8px 14px;
-            border: none;
-            border-radius: var(--radius);
-            background: var(--accent);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: background 0.2s ease, transform 0.1s ease;
-        }
+#output {
+    margin-top: 1rem;
+    flex: 1;
+    padding: 2em;
+    overflow-y: auto;
+    line-height: 1.7;
+    background: #fff;
+    color: #000;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    user-select: text;
+}
+#output h1, #output h2, #output h3 { border-bottom: 1px solid #fff1;padding-bottom: 0.3em; }
 
-        #browse:hover {
-            background: var(--accent-light);
-            transform: translateY(-2px);
-        }
+#output img {
+    display: block;
+    margin: 1.5em auto;
+    max-width: 90%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
 
-        main {
-            display: flex;
-            gap: 5px;
-            margin: 6px;
-        }
+.math-display {text-align: center;margin: 1em 0;}
 
-        textarea {
-            outline: none;
-            width: 50%;
-            height: 80vh;
-            padding: 1em;
-            border: none;
-            resize: none;
-            font-size: 1rem;
-            background: var(--bg-panel);
-            color: var(--text-main);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-top: 1rem;
-        }
+pre {
+    background: #0b0b0b;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    padding: 1em;
+}
 
-        #output {
-            margin-top: 1rem;
-            flex: 1;
-            padding: 2em;
-            overflow-y: auto;
-            line-height: 1.7;
-            background: #fff;
-            color: #000;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            user-select: text;
-        }
+.button {
+    margin: 0 1rem 1rem;
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: background 0.2s ease-in-out, transform 0.1s ease;
+}
 
-        #output h1,
-        #output h2,
-        #output h3 {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 0.3em;
-        }
+.button:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+}
 
-        #output img {
-            display: block;
-            margin: 1.5em auto;
-            max-width: 90%;
-            height: auto;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
+input[type="color"] {
+    border: none;
+    border-radius: 8px;
+}
 
-        #output a {
-            color: var(--accent);
-        }
+svg#enter {width: 37px;right: 28px;bottom: 23px;position: fixed;transition: all 0.3s ease-in-out; }
 
-        #output a:hover {
-            text-decoration: underline;
-        }
+/* Overlay popup */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
-        .math-display {
-            text-align: center;
-            margin: 1em 0;
-        }
+.popup-box {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px #0004;
+    width: 260px;
+    text-align: center;
+    animation: popup 0.25s ease-out;
+}
 
-        mjx-container[jax="CHTML"] {
-            font-size: 1.05em;
-        }
+.popup-box h2 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+}
 
+/* Tombol di popup */
+.popup-box button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    transition: 0.2s ease;
+}
 
-        pre {
-            background: #0b0b0b;
-            border-radius: var(--radius);
-            overflow-x: auto;
-            padding: 1em;
-        }
+.popup-overlay {z-index: 3000;}
+#exportHtml {background: #3a7afe;}
+#exportHtml:hover {background: #2a5fd8;}
+#exportMD {background: #2ecc71;}
+#exportMD:hover {background: #25a25a;}
+#exportPdf {background: #9b59b6;}
+#exportPdf:hover {background: #884ea0;}
 
-        .button {
-            margin: 0 1rem 1rem;
-            padding: 10px 16px;
-            border: none;
-            border-radius: var(--radius);
-            background: var(--accent);
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: background 0.2s ease-in-out, transform 0.1s ease;
-        }
+/* Animasi popup */
+@keyframes popup {
+    from {transform: translateY(20px);opacity: 0;}
+    to {transform: translateY(0);opacity: 1;}
+}
 
-        .button:hover {
-            background: var(--accent-light);
-            transform: translateY(-2px);
-        }
+@media (max-width: 600px) {
+    main {flex-direction: column;}
 
-        input[type="color"] {
-            border: none;
-            border-radius: 8px;
-        }
+    textarea {
+        width: 100%;
+        height: 40vh;
+    }
 
-        #enter {
-            width: 37px;
-            right: 28px;
-            bottom: 23px;
-            position: fixed;
-            transition: all 0.3s ease-in-out;
-        }
+    #enter {
+        width: 30px;
+        right: 25px;
+        bottom: 25px;
+    }
 
-        #enter:hover {
-            transform: scale(1.08);
-        }
+    #menuBtn {
+        width: 30px;
+        height: 22px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 200;
+    }
 
-        /* Overlay popup */
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(3px);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+    #menuBtn p {
+        display: block;
+        height: 3px;
+        width: 100%;
+        background: #fff;
+        border-radius: 3px;
+        transition: 0.35s ease;
+        transform-origin: center;
+    }
 
-        .popup-box {
-            background: white;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            width: 260px;
-            text-align: center;
-            animation: popup 0.25s ease-out;
-        }
+    #menuBtn.active p:nth-child(1) {transform: translateY(9px) rotate(45deg);}
+    #menuBtn.active p:nth-child(2) {opacity: 0;}
+    #menuBtn.active p:nth-child(3) {transform: translateY(-9px) rotate(-45deg);}
 
-        .popup-box h2 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            color: #333;
-        }
+    #side-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: fixed;
+        top: 59px;
+        right: -260px;
+        width: 240px;
+        height: 100%;
+        background: var(--bg-panel);
+        padding: 2em 1.2em;
+        transition: right 0.3s ease;
+        z-index: 1500;
+        box-shadow: -6px 0 18px #0006;
+        border-left: 1px solid #0301010d;
+    }
+    #side-menu.active {right: 0;}
+}
 
-        /* Tombol di popup */
-        .popup-box button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 6px 0;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            color: white;
-            transition: 0.2s ease;
-        }
-
-        #exportHtml {
-            background: #3a7afe;
-        }
-
-        #exportHtml:hover {
-            background: #2a5fd8;
-        }
-
-        #exportMD {
-            background: #2ecc71;
-        }
-
-        #exportMD:hover {
-            background: #25a25a;
-        }
-
-        #exportPdf {
-            background: #9b59b6;
-        }
-
-        #exportPdf:hover {
-            background: #884ea0;
-        }
-
-        /* Animasi popup */
-        @keyframes popup {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-
-        @media (min-width: 1000px) {
-            #side-menu a {
-                padding: 20px;
-            }
-
-            #enter {
-                width: 50px;
-                right: 25px;
-                bottom: 20px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            main {
-                flex-direction: column;
-            }
-
-            textarea {
-                width: 100%;
-                height: 40vh;
-            }
-
-            #enter {
-                width: 30px;
-                right: 25px;
-                bottom: 25px;
-            }
-
-            #menuBtn {
-                width: 30px;
-                height: 22px;
-                cursor: pointer;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                z-index: 2000;
-            }
-
-            #menuBtn p {
-                display: block;
-                height: 3px;
-                width: 100%;
-                background: #fff;
-                border-radius: 3px;
-                transition: 0.35s ease;
-                transform-origin: center;
-            }
-
-            #menuBtn.active p:nth-child(1) {
-                transform: translateY(9px) rotate(45deg);
-            }
-
-            #menuBtn.active p:nth-child(2) {
-                opacity: 0;
-            }
-
-            #menuBtn.active p:nth-child(3) {
-                transform: translateY(-9px) rotate(-45deg);
-            }
-
-            #side-menu {
-                position: fixed;
-                display: flex;
-                flex-direction: column;
-                top: 59px;
-                right: -260px;
-                width: 240px;
-                height: 100%;
-                background: var(--bg-panel);
-                padding: 2em 1.2em;
-                transition: right 0.3s ease;
-                z-index: 100;
-                box-shadow: -6px 0 18px #0006;
-                border-left: 1px solid #0301010d;
-            }
-
-            #side-menu.active {
-                right: 0;
-            }
-        }
+mjx-container[jax="CHTML"] {font-size: 1.05em;}
     </style>
 </head>
 
@@ -419,18 +290,14 @@
     <header>
         <a href="https://whois65.github.io/portfolio">Markdown</a>
         <nav id="side-menu">
-            <a href="https://whois65.github.io/portfolio">Home</a>
+            <button><a href="https://whois65.github.io/portfolio">Home</a></button>
             <button onclick="qs('#mdFile').click()">Open .md</button>
             <input type="file" id="mdFile" accept=".md" hidden />
             <button id="saveBtn">Save</button>
             <button id="settingsBtn">Settings</button>
-            <a href="example.md">Help</a>
+            <button><a href="example.md">Help</a></button>
         </nav>
-        <div id="menuBtn">
-            <p></p>
-            <p></p>
-            <p></p>
-        </div>
+        <div id="menuBtn"><p></p><p></p><p></p></div>
     </header>
 
     <main>
@@ -441,25 +308,27 @@ Write some **Markdown** or $E=mc^2$ here!
         <div id="output"></div>
     </main>
 
+    <!-- SETTINGS = warna -->
     <div id="settingsPopup" class="popup-overlay">
         <div class="popup-box">
-            <h2>Choose format</h2>
+            <h2>Settings</h2>
+            <label>Background color:</label>
+            <input type="color" id="colorpick1">
+            <label>Text color:</label>
+            <input type="color" id="colorpick2">
+        </div>
+    </div>
+
+    <!-- SAVE / EXPORT -->
+    <div id="savePopup" class="popup-overlay">
+        <div class="popup-box">
+            <h2>Save / Export</h2>
             <button id="exportMD">Markdown</button>
             <button id="exportHtml">HTML</button>
             <button id="exportPdf">PDF</button>
         </div>
     </div>
-    <div id="backdrop"></div>
 
-    <div id="savePopup" class="popup-overlay">
-        <div class="popup-box">
-            <h2>Settings</h2>
-            <label for="colorpick">Background color:</label>
-            <input type="color" name="color" id="colorpick" value="#FFFFFF" />
-            <label for="colorpicker">Text color:</label>
-            <input type="color" name="color2" id="colorpicker" value="#000000" />
-        </div>
-    </div>
 
     <svg id="enter">
         <path
@@ -475,14 +344,11 @@ Write some **Markdown** or $E=mc^2$ here!
         const fileInput = qi("mdFile");
         const menuBtn = qi("menuBtn");
         const sideMenu = qi("side-menu");
-        const backdrop = qi("backdrop");
-        const incolor = qs("#colorpick");
-        const incolor2 = qs("#colorpicker");
+        const incolor = qi("colorpick1");
+        const incolor2 = qi("colorpick2");
 
         /* ===== FULLSCREEN ===== */
-        qs("#enter").onclick = async () => {
-            await output.requestFullscreen();
-        };
+        qs("#enter").onclick = () => output.requestFullscreen?.().catch(() => { });
 
         incolor.addEventListener("change", () => {
             output.style.backgroundColor = incolor.value;
@@ -498,24 +364,20 @@ Write some **Markdown** or $E=mc^2$ here!
             menuBtn.classList.toggle("active", willOpen);
             backdrop.classList.toggle("active", willOpen);
             document.body.classList.toggle("menu-open", willOpen);
-            if (willOpen) menuBtn.style.zIndex = "2001";
-            else menuBtn.style.zIndex = "2000";
+            if (willOpen) menuBtn.style.zIndex = "1001";
+            else menuBtn.style.zIndex = "1000";
         }
-
         menuBtn.onclick = () => toggleMenu();
         menuBtn.addEventListener("keydown", (e) => {
             if (e.key === "Enter" || e.key === " ") toggleMenu();
         });
-        backdrop.onclick = () => toggleMenu(false);
-        sideMenu
-            .querySelectorAll("a,button,label")
-            .forEach((el) => el.onclick = () => toggleMenu(false));
+
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") toggleMenu(false);
         });
 
         marked.setOptions({
-            highlight: function (code, lang) {
+            highlight: (code, lang) => {
                 if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
                 return hljs.highlightAuto(code).value;
             },
@@ -524,37 +386,27 @@ Write some **Markdown** or $E=mc^2$ here!
         function updatePreview() {
             let html = editor.value;
             // Custom mark styling
-            html = html.replace(
-                /==(.+?)==/g, `<mark style="background-color:#f7f399;">$1</mark>`
-            );
-            html = html.replace(
-                /--(.+?)--/g, `<mark style="background-color:lightblue;">$1</mark>`
-            );
+            html = html.replace(/==(.+?)==/g, `<mark style="background-color:#f7f399;">$1</mark>`);
+            html = html.replace(/--(.+?)--/g, `<mark style="background-color:lightblue;">$1</mark>`);
             output.innerHTML = marked.parse(html);
-
-            // Syntax highlight
             output.querySelectorAll("pre code").forEach((block) => hljs.highlightElement(block));
-
-            // MathJax render ulang
             if (window.MathJax) {
                 MathJax.typesetClear();
                 MathJax.typesetPromise([output]);
             }
         }
-
         editor.addEventListener("input", updatePreview);
 
-        fileInput &&
-            fileInput.addEventListener("change", function () {
-                const file = this.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    editor.value = e.target.result;
-                    updatePreview();
-                };
-                reader.readAsText(file);
-            });
+        fileInput && fileInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                editor.value = e.target.result;
+                updatePreview();
+            };
+            reader.readAsText(file);
+        });
         updatePreview();
 
 
@@ -569,39 +421,38 @@ Write some **Markdown** or $E=mc^2$ here!
         const saveBtn = qi("saveBtn");
         const savePopup = qi("savePopup");
         const saveOptions = document.querySelectorAll(".save-option");
-
-        saveBtn.addEventListener("click", () => savePopup.style.display = "flex");
+        saveBtn.onclick = () => savePopup.style.display = "flex";
         savePopup.addEventListener("click", (e) => {
             if (e.target === savePopup) savePopup.style.display = "none";
         });
 
         const settingsBtn = qi("settingsBtn");
         const settingsPopup = qi("settingsPopup");
-        settingsBtn.addEventListener("click", () => settingsPopup.style.display = "flex");
-        settingsPopup.addEventListener("click", (e) => { if (e.target === settingsPopup) settingsPopup.style.display = "none"; });
+        settingsBtn.onclick = () => settingsPopup.style.display = "flex";
+        settingsPopup.addEventListener("click", (e) => {
+            if (e.target === settingsPopup) settingsPopup.style.display = "none";
+        });
 
         // Export MD
-        qi("exportMD").addEventListener("click", () => {
+        qi("exportMD").onclick = () => {
             const blob = new Blob([editor.value], { type: "text/markdown" });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
             link.download = prompt("Enter filename") + ".md";
             link.click();
-        });
+        };
 
         // Export PDF
-        qi("exportPdf").addEventListener("click", () => {
+        qi("exportPdf").onclick = () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: "pt", format: "a4" });
             doc.html(qi("output"), {
                 callback: function (doc) {
                     doc.save(prompt("Enter filename") + ".pdf");
                 },
-                x: 20,
-                y: 20,
-                width: 550,
+                x: 20, y: 20, width: 550,
             });
-        });
+        };
     </script>
 </body>
 
