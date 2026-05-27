@@ -3,457 +3,259 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Markdown Viewer</title>
-    <!-- MathJax -->
-    <script>
-        window.MathJax = { tex: {
-                inlineMath: [
-                    ["$", "$"],
-                    ["\\(", "\\)"],
-                ],
-                displayMath: [
-                    ["$$", "$$"],
-                    ["\\[", "\\]"],
-                ],
-            },
-            svg: { fontCache: "global" },
-        };
-    </script>
-    <script id="mathjax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- Markdown & Highlight --><script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <!--github.min.css, atom-one-dark.min.css, monokai-sublime.min.css, dracula.min.css-->
+    <script>window.MathJax = { tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]], displayMath: [["$$", "$$"], ["\\[", "\\]"]] }, svg: { fontCache: "global" } };</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="mathjax-script"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <!-- jsPDF --><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root {
-    color-scheme: dark;
-    --bg-main: #0f111a;
-    --bg-panel: #1a1d2b;
-    --accent: #4e9cff;
-    --accent-light: #7ab0ff;
-    --text-main: #e0e6f5;
-    --radius: 12px;
-    --shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-}
-
-* {padding: 0;margin: 0;box-sizing: border-box;font-family: "Segoe UI", Roboto, sans-serif; }
-
-body {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    margin: 0;
-    background: var(--bg-main);
-    color: var(--text-main);
-    user-select: none;
-}
-
-body.menu-open { overflow: hidden; }
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75em 1.2em;
-    background: linear-gradient(90deg, #1c2030, #23283d);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    box-shadow: var(--shadow);
-}
-
-header a {
-    color: #fff;
-    font-size: 30px;
-    text-decoration: none;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-#side-menu {position: absolute;right: 5px; }
-#side-menu button {border: none; background: none;}
-#side-menu a, #side-menu button {padding: 10px;font-size: 17px;text-decoration: none;color: #eee;font-weight: 500;touch-action: manipulation; }
-#side-menu button:hover, #side-menu a:hover { color: var(--accent-light); }
-#browse {
-    margin-top: 0.5rem;
-    padding: 8px 14px;
-    border: none;
-    border-radius: var(--radius);
-    background: var(--accent);
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: background 0.2s ease, transform 0.1s ease;
-}
-
-#browse:hover {
-    background: var(--accent-light);
-    transform: translateY(-2px);
-}
-
-main { display: flex; gap: 5px; margin: 6px; }
-
-textarea {
-    outline: none;
-    width: 50%;
-    height: 80vh;
-    padding: 1em;
-    border: none;
-    resize: none;
-    font-size: 1rem;
-    background: var(--bg-panel);
-    color: var(--text-main);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    margin-top: 1rem;
-}
-
-#output {
-    margin-top: 1rem;
-    flex: 1;
-    padding: 2em;
-    overflow-y: auto;
-    line-height: 1.7;
-    background: #fff;
-    color: #000;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    user-select: text;
-}
-#output h1, #output h2, #output h3 { border-bottom: 1px solid #fff1;padding-bottom: 0.3em; }
-
-#output img {
-    display: block;
-    margin: 1.5em auto;
-    max-width: 90%;
-    height: auto;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-
-.math-display {text-align: center;margin: 1em 0;}
-
-pre {
-    background: #0b0b0b;
-    border-radius: var(--radius);
-    overflow-x: auto;
-    padding: 1em;
-}
-
-.button {
-    margin: 0 1rem 1rem;
-    padding: 10px 16px;
-    border: none;
-    border-radius: var(--radius);
-    background: var(--accent);
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: background 0.2s ease-in-out, transform 0.1s ease;
-}
-
-.button:hover {
-    background: var(--accent-light);
-    transform: translateY(-2px);
-}
-
-input[type="color"] {
-    border: none;
-    border-radius: 8px;
-}
-
-svg#enter {width: 37px;right: 28px;bottom: 23px;position: fixed;transition: all 0.3s ease-in-out; }
-
-/* Overlay popup */
-.popup-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.popup-box {
-    background: white;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 10px 25px #0004;
-    width: 260px;
-    text-align: center;
-    animation: popup 0.25s ease-out;
-}
-
-.popup-box h2 {
-    margin-bottom: 15px;
-    font-size: 18px;
-    color: #333;
-}
-
-/* Tombol di popup */
-.popup-box button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 6px 0;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    color: white;
-    transition: 0.2s ease;
-}
-
-.popup-overlay {z-index: 3000;}
-#exportHtml {background: #3a7afe;}
-#exportHtml:hover {background: #2a5fd8;}
-#exportMD {background: #2ecc71;}
-#exportMD:hover {background: #25a25a;}
-#exportPdf {background: #9b59b6;}
-#exportPdf:hover {background: #884ea0;}
-
-/* Animasi popup */
-@keyframes popup {
-    from {transform: translateY(20px);opacity: 0;}
-    to {transform: translateY(0);opacity: 1;}
-}
-
-@media (max-width: 600px) {
-    main {flex-direction: column;}
-
-    textarea {
-        width: 100%;
-        height: 40vh;
-    }
-
-    #enter {
-        width: 30px;
-        right: 25px;
-        bottom: 25px;
-    }
-
-    #menuBtn {
-        width: 30px;
-        height: 22px;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        z-index: 200;
-    }
-
-    #menuBtn p {
-        display: block;
-        height: 3px;
-        width: 100%;
-        background: #fff;
-        border-radius: 3px;
-        transition: 0.35s ease;
-        transform-origin: center;
-    }
-
-    #menuBtn.active p:nth-child(1) {transform: translateY(9px) rotate(45deg);}
-    #menuBtn.active p:nth-child(2) {opacity: 0;}
-    #menuBtn.active p:nth-child(3) {transform: translateY(-9px) rotate(-45deg);}
-
-    #side-menu {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        position: fixed;
-        top: 59px;
-        right: -260px;
-        width: 240px;
-        height: 100%;
-        background: var(--bg-panel);
-        padding: 2em 1.2em;
-        transition: right 0.3s ease;
-        z-index: 1500;
-        box-shadow: -6px 0 18px #0006;
-        border-left: 1px solid #0301010d;
-    }
-    #side-menu.active {right: 0;}
-}
-
-mjx-container[jax="CHTML"] {font-size: 1.05em;}
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" />
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
     <header>
-        <a href="https://whois65.github.io/portfolio">Markdown</a>
-        <nav id="side-menu">
-            <button><a href="https://whois65.github.io/portfolio">Home</a></button>
-            <button onclick="qs('#mdFile').click()">Open .md</button>
-            <input type="file" id="mdFile" accept=".md" hidden />
-            <button id="saveBtn">Save</button>
-            <button id="settingsBtn">Settings</button>
-            <button><a href="example.md">Help</a></button>
-        </nav>
-        <div id="menuBtn"><p></p><p></p><p></p></div>
+        <div class="logo">MD</div>
+        <div class="sep"></div>
+
+        <!-- File menu -->
+        <div class="menu-wrap">
+            <button class="btn" id="fileMenuBtn">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                    stroke-width="1.5">
+                    <path d="M3 2h6l3 3v9H3z" />
+                    <path d="M9 2v3h3" />
+                </svg>File</button>
+
+            <button class="btn" id="helpBtn"><b style="font-size: 16px;">?</b> Help </button>
+
+            <div class="dropdown" id="fileMenu">
+                <button class="dd-item" id="openBtn">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M2 5h5l1.5-2H14v9H2z" />
+                    </svg>
+                    Open file…
+                </button>
+                <input type="file" id="mdFile" accept=".md,.txt" hidden />
+                <div class="dd-sep"></div>
+                <button class="dd-item" id="exportMD">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 2h7l3 3v9H3z" />
+                        <path d="M8 7v5m-2-2 2 2 2-2" />
+                    </svg>
+                    Save as .md
+                </button>
+                <button class="dd-item" id="exportHtml">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M4 3l-2 5 2 5m8-10 2 5-2 5M9 2l-2 12" />
+                    </svg>
+                    Export as HTML
+                </button>
+                <button class="dd-item" id="exportPdf">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 2h6l3 3v9H3z" />
+                        <path d="M6 9h4M6 11h2" />
+                    </svg>
+                    Export as PDF
+                </button>
+                <div class="dd-sep"></div>
+                <button class="dd-item danger" id="clearBtn" style="color:#ef4444;">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 5h10l-.8 8H3.8z" />
+                        <path d="M5 5V3h6v2M1 5h14" />
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <!-- View tabs -->
+        <div class="view-tabs">
+            <button class="view-tab" data-mode="editor">Editor</button>
+            <button class="view-tab active" data-mode="split">Split</button>
+            <button class="view-tab" data-mode="preview">Preview</button>
+        </div>
+
+        <div class="spacer"></div>
+
+        <!-- TOC toggle -->
+        <button class="btn btn-icon" id="tocToggle" title="Toggle table of contents">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M2 4h12M2 8h8M2 12h10" />
+            </svg>
+        </button>
+
+        <!-- Find -->
+        <button class="btn btn-icon" id="findToggle" title="Find & Replace (Ctrl+F)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="6.5" cy="6.5" r="4" />
+                <path d="M11 11l3 3" />
+            </svg>
+        </button>
+
+        <!-- Dark mode -->
+        <button class="btn btn-icon" id="darkToggle" title="Toggle dark mode">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path
+                    d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M3.5 12.5l1.4-1.4M11.1 4.9l1.4-1.4" />
+                <circle cx="8" cy="8" r="3.5" />
+            </svg>
+        </button>
+
+        <!-- Copy -->
+        <button class="btn btn-icon" id="copyBtn" title="Copy markdown">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="5" y="5" width="9" height="9" rx="1" />
+                <path d="M3 11V2h9" />
+            </svg>
+        </button>
     </header>
 
-    <main>
-        <textarea id="editor" placeholder="Write here....."># Welcome to Markdown Viewer
+    <!-- Toolbar (formatting shortcuts) -->
+    <div class="toolbar">
+        <div class="toolbar-group">
+            <button class="tb-btn" data-wrap="**" title="Bold">
+                <svg viewBox="0 0 14 14" fill="currentColor">
+                    <path d="M3 2h5a3 3 0 010 6H3zm0 6h5.5a3 3 0 010 6H3z" opacity=".8" />
+                </svg><span>B</span></button>
+            <button class="tb-btn" data-wrap="*" title="Italic">
+                <svg viewBox="0 0 14 14" fill="currentColor">
+                    <path d="M5 2h6M3 12h6M6 2l-2 10" stroke="currentColor" stroke-width="1.4" fill="none" />
+                </svg><span>I</span></button>
+            <button class="tb-btn" data-wrap="~~" title="Strikethrough">
+                <svg viewBox="0 0 14 14" fill="none"
+                    stroke="currentColor" stroke-width="1.3">
+                    <line x1="2" y1="7" x2="12" y2="7" />
+                    <path d="M4 4c0-1.1 1.3-2 3-2s3 .9 3 2M4 10c0 1.1 1.3 2 3 2s3-.9 3-2" />
+                </svg><span>S</span></button>
+            <button class="tb-btn" data-wrap="`" title="Inline code">
+                <svg viewBox="0 0 14 14" fill="none"
+                    stroke="currentColor" stroke-width="1.4">
+                    <path d="M5 4l-3 3 3 3M9 4l3 3-3 3" />
+                </svg><span>Code</span></button>
+        </div>
+        <div class="tb-sep"></div>
+        <div class="toolbar-group">
+            <button class="tb-btn" data-prefix="# " title="Heading 1"><span>H1</span></button>
+            <button class="tb-btn" data-prefix="## " title="Heading 2"><span>H2</span></button>
+            <button class="tb-btn" data-prefix="### " title="Heading 3"><span>H3</span></button>
+        </div>
+        <div class="tb-sep"></div>
+        <div class="toolbar-group">
+            <button class="tb-btn" data-prefix="- " title="Bullet list">
+                <svg viewBox="0 0 14 14" fill="none"
+                    stroke="currentColor" stroke-width="1.3">
+                    <circle cx="2" cy="4" r="1" fill="currentColor" />
+                    <circle cx="2" cy="7" r="1" fill="currentColor" />
+                    <circle cx="2" cy="10" r="1" fill="currentColor" />
+                    <line x1="5" y1="4" x2="12" y2="4" />
+                    <line x1="5" y1="7" x2="12" y2="7" />
+                    <line x1="5" y1="10" x2="12" y2="10" />
+                </svg><span>List</span></button>
+            <button class="tb-btn" data-prefix="1. " title="Ordered list">
+                <svg viewBox="0 0 14 14" fill="none"
+                    stroke="currentColor" stroke-width="1.3">
+                    <path d="M2 3v3" stroke-width="1" />
+                    <line x1="5" y1="4" x2="12" y2="4" />
+                    <line x1="5" y1="7" x2="12" y2="7" />
+                    <line x1="5" y1="10" x2="12" y2="10" />
+                </svg><span>Ordered</span></button>
+            <button class="tb-btn" data-prefix="> " title="Blockquote">
+                <svg viewBox="0 0 14 14" fill="currentColor">
+                    <path d="M1 3h2v4H1zm5 0h2v4H6zm-5 5h2v1H1zm5 0h2v1H6z" opacity=".7" />
+                </svg><span>Quote</span></button>
+            <button class="tb-btn" data-insert="---\n" title="Horizontal rule">
+                <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <line x1="2" y1="7" x2="12" y2="7" />
+                </svg><span>HR</span></button>
+        </div>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" data-insert="[text](url)" title="Link">
+            <svg viewBox="0 0 14 14" fill="none"
+                stroke="currentColor" stroke-width="1.3">
+                <path d="M6 8a3 3 0 004.2.4l1.8-1.8a3 3 0 00-4.2-4.2L6.9 3.3" />
+                <path d="M8 6a3 3 0 00-4.2-.4L2 7.4a3 3 0 004.2 4.2l.9-.9" />
+            </svg><span>Link</span></button>
+        <button class="tb-btn" data-insert="![alt](url)" title="Image">
+            <svg viewBox="0 0 14 14" fill="none"
+                stroke="currentColor" stroke-width="1.3">
+                <rect x="1" y="3" width="12" height="8" rx="1" />
+                <path d="M1 9l3-3 2.5 2.5 2-2L12 9" />
+                <circle cx="4.5" cy="6" r="1" fill="currentColor" stroke="none" />
+            </svg><span>Image</span></button>
+        <button class="tb-btn"
+            data-insert="| Col 1 | Col 2 | Col 3 |\n|-------|-------|-------|\n| A     | B     | C     |\n"
+            title="Table">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+                <rect x="1" y="1" width="12" height="12" rx="1" />
+                <line x1="1" y1="5" x2="13" y2="5" />
+                <line x1="5" y1="5" x2="5" y2="13" />
+                <line x1="9" y1="5" x2="9" y2="13" />
+            </svg><span>Table</span></button>
+        <button class="tb-btn" id="emojiBtn">
+            <svg viewBox="0 0 100 100" width="100" height="100">
+                <circle cx="50" cy="50" r="45" fill="#FFD233" stroke="#E6B400" stroke-width="3" />
+                <circle cx="35" cy="40" r="5" fill="#2C2C2C" />
+                <circle cx="65" cy="40" r="5" fill="#2C2C2C" />
+                <path d="M 30,55 A 20,20 0 0,0 70,55 Z" fill="#2C2C2C" />
+            </svg>
+            <span>Emoji</span></button>
+    </div>
 
-Write some **Markdown** or $E=mc^2$ here!
-</textarea>
-        <div id="output"></div>
-    </main>
+    <!-- Find bar -->
+    <div class="find-bar hidden" id="findBar">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+            style="width:14px;height:14px;color:var(--muted);flex-shrink:0">
+            <circle cx="6.5" cy="6.5" r="4" />
+            <path d="M11 11l3 3" />
+        </svg>
+        <input type="text" id="findInput" placeholder="Find…" />
+        <input type="text" id="replaceInput" placeholder="Replace with…" />
+        <button class="tb-btn" id="findPrev">↑</button>
+        <button class="tb-btn" id="findNext">↓</button>
+        <button class="tb-btn" id="replaceOne">Replace</button>
+        <button class="tb-btn" id="replaceAll">All</button>
+        <span class="find-count" id="findCount"></span>
+        <button class="tb-btn" style="margin-left:auto" id="findClose">✕</button>
+    </div>
 
-    <!-- SETTINGS = warna -->
-    <div id="settingsPopup" class="popup-overlay">
-        <div class="popup-box">
-            <h2>Settings</h2>
-            <label>Background color:</label>
-            <input type="color" id="colorpick1">
-            <label>Text color:</label>
-            <input type="color" id="colorpick2">
+    <!-- Workspace -->
+    <div class="workspace" id="workspace">
+        <div class="editor-pane" id="editorPane">
+            <textarea id="editor" spellcheck="false"></textarea>
+        </div>
+        <div class="divider" id="divider"></div>
+        <div class="preview-pane" id="previewPane">
+            <div id="output"></div>
+        </div>
+        <div class="toc-sidebar hidden" id="tocSidebar">
+            <div class="toc-title">Contents</div>
+            <div id="tocList"></div>
         </div>
     </div>
 
-    <!-- SAVE / EXPORT -->
-    <div id="savePopup" class="popup-overlay">
-        <div class="popup-box">
-            <h2>Save / Export</h2>
-            <button id="exportMD">Markdown</button>
-            <button id="exportHtml">HTML</button>
-            <button id="exportPdf">PDF</button>
-        </div>
+    <div class="statusbar">
+        <span class="status-pill"><span class="saved-dot" id="savedDot"></span> <span
+                id="savedLabel">Saved</span></span>
+        <span id="wordCount">0 words</span>
+        <span id="charCount">0 chars</span>
+        <span id="lineCount">0 lines</span>
+        <div class="spacer"></div>
+        <span id="cursorPos">Ln 1, Col 1</span>
     </div>
 
+    <div class="toast" id="toast"></div>
 
-    <svg id="enter">
-        <path
-            d="M2 2.5C2 2.22386 2.22386 2 2.5 2H5.5C5.77614 2 6 2.22386 6 2.5C6 2.77614 5.77614 3 5.5 3H3V5.5C3 5.77614 2.77614 6 2.5 6C2.22386 6 2 5.77614 2 5.5V2.5ZM9 2.5C9 2.22386 9.22386 2 9.5 2H12.5C12.7761 2 13 2.22386 13 2.5V5.5C13 5.77614 12.7761 6 12.5 6C12.2239 6 12 5.77614 12 5.5V3H9.5C9.22386 3 9 2.77614 9 2.5ZM2.5 9C2.77614 9 3 9.22386 3 9.5V12H5.5C5.77614 12 6 12.2239 6 12.5C6 12.7761 5.77614 13 5.5 13H2.5C2.22386 13 2 12.7761 2 12.5V9.5C2 9.22386 2.22386 9 2.5 9ZM12.5 9C12.7761 9 13 9.22386 13 9.5V12.5C13 12.7761 12.7761 13 12.5 13H9.5C9.22386 13 9 12.7761 9 12.5C9 12.2239 9.22386 12 9.5 12H12V9.5C12 9.22386 12.2239 9 12.5 9Z"
-            fill="#000">
-    </svg>
-
-    <script>
-        const qi = x => document.getElementById(x);
-        const qs = x => document.querySelector(x);
-        const editor = qi("editor");
-        const output = qi("output");
-        const fileInput = qi("mdFile");
-        const menuBtn = qi("menuBtn");
-        const sideMenu = qi("side-menu");
-        const incolor = qi("colorpick1");
-        const incolor2 = qi("colorpick2");
-
-        /* ===== FULLSCREEN ===== */
-        qs("#enter").onclick = () => output.requestFullscreen?.().catch(() => { });
-
-        incolor.addEventListener("change", () => {
-            output.style.backgroundColor = incolor.value;
-        });
-
-        incolor2.addEventListener("change", () => {
-            output.style.color = incolor2.value;
-        });
-
-        function toggleMenu(force) {
-            const willOpen = force !== undefined ? force : !sideMenu.classList.contains("active");
-            sideMenu.classList.toggle("active", willOpen);
-            menuBtn.classList.toggle("active", willOpen);
-            backdrop.classList.toggle("active", willOpen);
-            document.body.classList.toggle("menu-open", willOpen);
-            if (willOpen) menuBtn.style.zIndex = "1001";
-            else menuBtn.style.zIndex = "1000";
-        }
-        menuBtn.onclick = () => toggleMenu();
-        menuBtn.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") toggleMenu();
-        });
-
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") toggleMenu(false);
-        });
-
-        marked.setOptions({
-            highlight: (code, lang) => {
-                if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
-                return hljs.highlightAuto(code).value;
-            },
-        });
-
-        function updatePreview() {
-            let html = editor.value;
-            // Custom mark styling
-            html = html.replace(/==(.+?)==/g, `<mark style="background-color:#f7f399;">$1</mark>`);
-            html = html.replace(/--(.+?)--/g, `<mark style="background-color:lightblue;">$1</mark>`);
-            output.innerHTML = marked.parse(html);
-            output.querySelectorAll("pre code").forEach((block) => hljs.highlightElement(block));
-            if (window.MathJax) {
-                MathJax.typesetClear();
-                MathJax.typesetPromise([output]);
-            }
-        }
-        editor.addEventListener("input", updatePreview);
-
-        fileInput && fileInput.addEventListener("change", function () {
-            const file = this.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                editor.value = e.target.result;
-                updatePreview();
-            };
-            reader.readAsText(file);
-        });
-        updatePreview();
-
-
-        // main.js
-        window.addEventListener("load", () => {
-            const script = document.createElement("script");
-            script.src = "export.js";
-            script.defer = true;
-            document.body.appendChild(script);
-        });
-
-        const saveBtn = qi("saveBtn");
-        const savePopup = qi("savePopup");
-        const saveOptions = document.querySelectorAll(".save-option");
-        saveBtn.onclick = () => savePopup.style.display = "flex";
-        savePopup.addEventListener("click", (e) => {
-            if (e.target === savePopup) savePopup.style.display = "none";
-        });
-
-        const settingsBtn = qi("settingsBtn");
-        const settingsPopup = qi("settingsPopup");
-        settingsBtn.onclick = () => settingsPopup.style.display = "flex";
-        settingsPopup.addEventListener("click", (e) => {
-            if (e.target === settingsPopup) settingsPopup.style.display = "none";
-        });
-
-        // Export MD
-        qi("exportMD").onclick = () => {
-            const blob = new Blob([editor.value], { type: "text/markdown" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = prompt("Enter filename") + ".md";
-            link.click();
-        };
-
-        // Export PDF
-        qi("exportPdf").onclick = () => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ unit: "pt", format: "a4" });
-            doc.html(qi("output"), {
-                callback: function (doc) {
-                    doc.save(prompt("Enter filename") + ".pdf");
-                },
-                x: 20, y: 20, width: 550,
-            });
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
