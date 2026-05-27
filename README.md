@@ -1,4 +1,4 @@
-# Markdown Viewer ✦
+# Markdown Editor ✦
 
 A modern live Markdown editor and previewer built with HTML, CSS, and JavaScript.
 
